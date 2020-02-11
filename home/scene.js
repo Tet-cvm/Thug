@@ -16,6 +16,9 @@ export default class Scene {
     this.appView = null,
     this.forest = null,
     this.cobbled = null,
+    this.notice = null,
+    this.setting = null,
+    this.track = null,
     this.gameScene = new Container(),
     this.gamePadLeft = new Container(),
     this.gamePadRight = new Container(),
@@ -61,11 +64,17 @@ export default class Scene {
     const assets = [
       { name: 'forest', url: './assets/forest.jpg' },
       { name: 'cobbled', url: './assets/cobbled.png' },
+      { name: 'notice', url: './assets/notice.png' },
+      { name: 'setting', url: './assets/setting.png' },
+      { name: 'track', url: './assets/track.png' },
     ]
 
     this.appView.loader.add(assets).load(() => {
       const forest = PIXI.Texture.fromImage('forest');
       const cobbled = PIXI.Texture.fromImage('cobbled');
+      const notice  = new Sprite.from('notice');
+      const setting = new Sprite.from('setting');
+      const track = new Sprite.from('track');
       // 回去比例宽高
       let width = windowWidth / this.ratio;
       let height = windowHeight / this.ratio;
@@ -87,8 +96,21 @@ export default class Scene {
       cobbled.orig.width = parseInt(_cobbled * 1286 / 179);
       cobbled.orig.height = _cobbled;
 
+      // 通告牌
+      notice.x = width - notice.width - 180;
+      notice.y = height - cobbled.orig.height - notice.height + cobbled.orig.height * 0.32;
+
+      setting.x = width - setting.width - width * 0.2;
+      setting.y = 18;
+
+      track.x = width - setting.width * 2 - width * 0.2 - 60;
+      track.y = 18;
+
       this.forest = new PIXI.extras.TilingSprite(forest, width, _forest);
       this.cobbled = new PIXI.extras.TilingSprite(cobbled, width, _cobbled);
+      this.notice = notice;
+      this.setting = setting;
+      this.track = track;
 
       this.forest.position.x = 0;
       this.forest.position.y = 0;
@@ -96,7 +118,31 @@ export default class Scene {
       this.cobbled.position.x = 0;
       this.cobbled.position.y = height - cobbled.height;
 
-      this.appView.stage.addChild(this.forest, this.cobbled, this.gameScene, this.gameControl);
+      this.notice.interactive = true;
+      this.notice.buttonMode = true;
+
+      this.setting.interactive = true;
+      this.setting.buttonMode = true;
+
+      this.track.interactive = true;
+      this.track.buttonMode = true;
+
+      this.notice.on('pointertap', () => {
+        utils.audioScene ? GameGlobal.globalAction.onClickPlay() : null;
+        eventBus.emit(eventTypes.TOUCH_NOTICE, 'onBoxGem');
+      })
+
+      this.setting.on('pointertap', () => {
+        utils.audioScene ? GameGlobal.globalAction.onClickPlay() : null;
+        eventBus.emit(eventTypes.TOUCH_SETTING, 'onBoxGem');
+      })
+
+      this.track.on('pointertap', () => {
+        utils.audioScene ? GameGlobal.globalAction.onClickPlay() : null;
+        eventBus.emit(eventTypes.TOUCH_TRACK, 'onBoxGem');
+      })
+
+      this.appView.stage.addChild(this.forest, this.cobbled, this.setting, this.notice, this.track, this.gameScene, this.gameControl);
       utils.audioStage ? GameGlobal.globalAction.onStagePlay() : null;
       this.onGamePad();
     })

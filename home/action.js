@@ -11,6 +11,9 @@ export default class Action {
     eventBus.on(eventTypes.TOUCH_LEFT, this.onLeftGamePad, this);
     eventBus.on(eventTypes.TOUCH_RIGHT, this.onRightGamePad, this);
     eventBus.on(eventTypes.TOUCH_PLAY, this.onGamePlay, this);
+    eventBus.on(eventTypes.TOUCH_NOTICE, this.onNotice, this);
+    eventBus.on(eventTypes.TOUCH_SETTING, this.onSetting, this);
+    eventBus.on(eventTypes.TOUCH_TRACK, this.onTrack, this);
   }
   onAudioStage() { // 加载背景音乐
     this.audioStage = wx.createInnerAudioContext();
@@ -97,5 +100,14 @@ export default class Action {
   onPlayAnimate(type, maxScale, minScale) {
     let scale = type == 0 ? minScale : maxScale;
     GameGlobal.globalScene.playBtn.scale.set(scale);
+  }
+  onNotice() {
+    console.log('notice')
+  }
+  onSetting() {
+    console.log('setting')
+  }
+  onTrack() {
+    console.log('track')
   }
 }
