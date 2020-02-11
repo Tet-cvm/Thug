@@ -19,7 +19,11 @@ export default class Scene {
     this.gameScene = new Container(),
     this.gamePadLeft = new Container(),
     this.gamePadRight = new Container(),
+    this.gameHome = new Container(),
+    this.gameControl = new Container(),
+    this.gameStart = new Container(),
     this.padArray = [],
+    this.playBtn = null,
     this.onAppView()
   }
   onAppView() {
@@ -92,7 +96,7 @@ export default class Scene {
       this.cobbled.position.x = 0;
       this.cobbled.position.y = height - cobbled.height;
 
-      this.appView.stage.addChild(this.forest, this.cobbled, this.gameScene);
+      this.appView.stage.addChild(this.forest, this.cobbled, this.gameScene, this.gameControl);
       utils.audioStage ? GameGlobal.globalAction.onStagePlay() : null;
       this.onGamePad();
     })
@@ -142,8 +146,11 @@ export default class Scene {
       this.gamePadLeft.x = rightBubble.width / 2;
       this.gamePadRight.x = windowWidth / this.ratio - rightBubble.width / 2;
 
-      this.gamePadLeft.y = (windowHeight / this.ratio - leftBubble.height) / 2 + leftBubble.height / 2;
-      this.gamePadRight.y = (windowHeight / this.ratio - rightBubble.height) / 2 + rightBubble.height / 2;
+      this.gamePadLeft.y = windowHeight / this.ratio / 2;
+      this.gamePadRight.y = windowHeight / this.ratio / 2;
+
+      // this.gamePadLeft.y = (windowHeight / this.ratio - leftBubble.height) / 2 + leftBubble.height / 2;
+      // this.gamePadRight.y = (windowHeight / this.ratio - rightBubble.height) / 2 + rightBubble.height / 2;
 
       this.gamePadLeft.x += 60;
       this.gamePadRight.x -= 60;
@@ -164,7 +171,7 @@ export default class Scene {
       }
 
       this.padArray.push(arrLeft, arrRight, arrScale);
-      this.gameScene.addChild(this.gamePadLeft, this.gamePadRight);
+      this.gameScene.addChild(this.gameHome, this.gamePadLeft, this.gamePadRight);
 
       // 游戏手柄绑定事件
       this.gamePadLeft.interactive = true;
@@ -196,6 +203,7 @@ export default class Scene {
         GameGlobal.globalAction.onPadAnimation('right', 'up');
       })
       this.onHuman();
+      this.onGameStart();
     })
   }
   onScenePad(direction, value) { // 场景控制器 @direction 0 left 1 right @value 场景切换值
@@ -212,5 +220,60 @@ export default class Scene {
   }
   onHuman() { // 初始化主角
     console.log('human')
+    // this.appView.loader.add('spineboy', '../assets/spineboy.json').load((loader, res) => {
+    //   console.log(res.spineboy, '@res')
+    // })
+
+    // this.appView.loader.add('spineboy', 'https://mdqygl.cn/thug/spineboy.png').load((loader, res) => {
+    //   console.log(res.spineboy, '@res')
+    //   let spineBoy = new Sprite.from('spineboy')
+    //   // let spineBoy = new PIXI.spine.Spine(res.spineboy);
+    //   spineBoy.x = 100;
+    //   spineBoy.y = 100;
+    //   this.gameHome.addChild(spineBoy);
+    //   console.log(this.appView, '@this.appView')
+    // })
+
+    // this.appView.loader.add('spineboy', 'https://mdqygl.cn/thug/spineboy.json').load((loader, res) => {
+    //   console.log(res.spineboy, '@res')
+    //   let spineBoy = new PIXI.spine.Spine(res.spineboy.spineData);
+    //   spineBoy.x = this.appView.screen.width / 2;
+    //   spineBoy.y = this.appView.screen.height;
+    //   this.gameScene.addChild(spineBoy);
+    //   console.log(this.appView, '@this.appView')
+    // })
+  }
+  onGameStart() { // 游戏开始按钮
+    const assets = [
+      { name: 'play', url: './assets/play.png' },
+    ]
+
+    this.appView.loader.add(assets).load(() => {
+      const play = new Sprite.from('play');
+      play.anchor.set(0.5);
+      play.x = windowWidth / this.ratio / 2;
+      play.y = windowHeight / this.ratio / 2;
+
+      this.playBtn = play;
+      this.gameStart.addChild(play);
+      this.gameControl.addChild(this.gameStart);
+
+      this.gameStart.interactive = true;
+      this.gameStart.buttonMode = true;
+
+      let arrScale = {
+        maxScale: play.scale.x,
+        minScale: play.scale.x * 0.9,
+      }
+
+      this.gameStart.on('pointerdown', () => {
+        utils.audioScene ? GameGlobal.globalAction.onClickPlay() : null;
+        GameGlobal.globalAction.onPlayAnimate(0, arrScale.maxScale, arrScale.minScale);
+      })
+      this.gameStart.on('pointerup', () => {
+        GameGlobal.globalAction.onPlayAnimate(1, arrScale.maxScale, arrScale.minScale);
+        eventBus.emit(eventTypes.TOUCH_PLAY, 'onBoxGem');
+      })
+    })
   }
 }

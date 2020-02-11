@@ -10,6 +10,7 @@ export default class Action {
   onAddEvent() { // 监听事件中心
     eventBus.on(eventTypes.TOUCH_LEFT, this.onLeftGamePad, this);
     eventBus.on(eventTypes.TOUCH_RIGHT, this.onRightGamePad, this);
+    eventBus.on(eventTypes.TOUCH_PLAY, this.onGamePlay, this);
   }
   onAudioStage() { // 加载背景音乐
     this.audioStage = wx.createInnerAudioContext();
@@ -89,5 +90,12 @@ export default class Action {
   onPadScale(index, scale) {
     GameGlobal.globalScene.padArray[index].arrow.scale.set(scale);
     GameGlobal.globalScene.padArray[index].bubble.scale.set(scale);
+  }
+  onGamePlay() { // 游戏开始
+    console.log('游戏开始')
+  }
+  onPlayAnimate(type, maxScale, minScale) {
+    let scale = type == 0 ? minScale : maxScale;
+    GameGlobal.globalScene.playBtn.scale.set(scale);
   }
 }
