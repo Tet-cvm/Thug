@@ -20,11 +20,12 @@ Thug
 |
 |—— assets                // 静态图片资源目录
 
+```
 
+## 小游戏接口
+```
 
-appView |—— gameScene     |—— gamePadLeft  游戏左侧手柄
-                          |—— gamePadRight 游戏右侧手柄
-                          |—— gameHome     主角&&野怪
+地址: http://game.slogger.cn/register/userinfo
+返回值: status  // 1 用户首次注册登陆 2 用户已注册登陆
 
-        |—— gameControl   |—— gameStart    游戏开始
 ```
