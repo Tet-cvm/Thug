@@ -511,9 +511,9 @@ export default class Scene {
     spineBoy.interactive = true
     spineBoy.buttonMode = false
 
-    this.gameBoxControl.interactive = true
+    // this.gameBoxControl.interactive = true
 
-    this.gameBoxControl.addChild(spineBoy)
-    this.actStage.addChild(this.gameBoxControl)
+    // this.gameBoxControl.addChild(spineBoy)
+    // this.actStage.addChild(this.gameBoxControl)
   }
 }
